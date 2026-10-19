@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNA 2 Quiz — SRWE</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --accent: #00d084;
+    --accent-dim: rgba(0,208,132,0.12);
+    --red: #f85149;
+    --red-dim: rgba(248,81,73,0.12);
+    --yellow: #e3b341;
+    --yellow-dim: rgba(227,179,65,0.1);
+    --blue: #58a6ff;
+    --blue-dim: rgba(88,166,255,0.1);
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #484f58;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── HEADER ── */
+  header {
+    width: 100%;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--text2); font-weight: 400; }
+  .hud {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .hud-item strong { color: var(--text); }
+  #timer-display { color: var(--accent); font-weight: 700; }
+
+  /* ── MAIN ── */
+  main {
+    width: 100%;
+    max-width: 760px;
+    padding: 36px 24px 80px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width .4s ease;
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    animation: slideIn .3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .q-meta .badge {
+    background: var(--blue-dim);
+    color: var(--blue);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+  .question-text {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+  .multi-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--yellow);
+    background: var(--yellow-dim);
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    display: inline-block;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    background: var(--surface2);
+    user-select: none;
+  }
+  .option:hover { border-color: var(--blue); background: var(--blue-dim); }
+  .option.selected { border-color: var(--blue); background: var(--blue-dim); }
+  .option.correct  { border-color: var(--accent); background: var(--accent-dim); }
+  .option.wrong    { border-color: var(--red); background: var(--red-dim); }
+  .option.missed   { border-color: var(--accent); background: var(--accent-dim); opacity: .7; }
+
+  .option-letter {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text3);
+    background: var(--border);
+    border-radius: 4px;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .option.selected .option-letter { background: var(--blue); color: #fff; }
+  .option.correct  .option-letter { background: var(--accent); color: #000; }
+  .option.wrong    .option-letter { background: var(--red); color: #fff; }
+  .option-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    font-family: var(--mono);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row { margin-top: 28px; display: flex; gap: 12px; }
+  .btn {
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:hover { opacity: .9; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-secondary { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* ── RESULTS ── */
+  #results-screen { display: none; }
+  .score-hero {
+    text-align: center;
+    padding: 48px 24px 32px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    margin-bottom: 32px;
+  }
+  .score-ring {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .ring-bg { fill: none; stroke: var(--border); stroke-width: 8; }
+  .score-ring .ring-fg { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .score-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+  }
+  .score-pct { font-size: 28px; font-weight: 700; }
+  .score-frac { font-size: 11px; color: var(--text2); }
+  .score-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .stat { text-align: center; }
+  .stat .val { font-size: 20px; font-weight: 700; display: block; }
+  .stat .lbl { color: var(--text2); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .stat.green .val { color: var(--accent); }
+  .stat.red   .val { color: var(--red); }
+  .stat.blue  .val { color: var(--blue); }
+
+  .review-header {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--text3);
+    margin: 28px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .review-item.wrong-item { border-color: rgba(248,81,73,.3); }
+  .review-q {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .review-answers { display: flex; flex-direction: column; gap: 6px; }
+  .review-answer {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  .review-answer.your-wrong { background: var(--red-dim); color: var(--red); }
+  .review-answer.correct-ans { background: var(--accent-dim); color: var(--accent); }
+  .review-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; display: block; margin-bottom: 2px; }
+  .expl {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.55;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-radius: 4px;
+    border-left: 2px solid var(--border);
+  }
+
+  /* ── START SCREEN ── */
+  #start-screen {
+    text-align: center;
+    padding-top: 60px;
+  }
+  .start-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .start-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .start-sub {
+    font-size: 15px;
+    color: var(--text2);
+    margin-bottom: 40px;
+  }
+  .start-info {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  .info-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    min-width: 120px;
+  }
+  .info-block .ib-val {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+  .info-block .ib-lbl {
+    font-size: 12px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CCNA 2 <span>/ SRWE</span></div>
+  <div class="hud" id="hud" style="display:none">
+    <div class="hud-item">Q <strong id="hud-q">1</strong> / <strong id="hud-total">60</strong></div>
+    <div class="hud-item">⏱ <span id="timer-display">00:00</span></div>
+    <div class="hud-item">✓ <strong id="hud-correct" style="color:var(--accent)">0</strong></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- START SCREEN -->
+  <div id="start-screen">
+    <div class="start-logo">Switching · Routing · Wireless Essentials</div>
+    <h1 class="start-title">CCNA 2 Practice Quiz</h1>
+    <p class="start-sub">Questions randomized from the official SRWE exam bank</p>
+    <div class="start-info">
+      <div class="info-block">
+        <span class="ib-val">60</span>
+        <span class="ib-lbl">Questions</span>
+      </div>
+      <div class="info-block">
+        <span class="ib-val" id="pool-total">165</span>
+        <span class="ib-lbl">Total pool</span>
+      </div>
+      <div class="info-block">
+        <span class="ib-val">∞</span>
+        <span class="ib-lbl">Retakes</span>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()" style="font-size:15px;padding:14px 40px">Start Quiz →</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen" style="display:none">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="question-container"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Next →</button>
+      <button class="btn btn-secondary" onclick="confirmQuit()">Quit</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen">
+    <div class="score-hero">
+      <div class="score-ring">
+        <svg viewBox="0 0 100 100" width="120" height="120">
+          <circle class="ring-bg" cx="50" cy="50" r="42"/>
+          <circle class="ring-fg" id="ring-fg" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/>
+        </svg>
+        <div class="score-number">
+          <span class="score-pct" id="res-pct">0%</span>
+          <span class="score-frac" id="res-frac">0/60</span>
+        </div>
+      </div>
+      <div class="score-stats">
+        <div class="stat green"><span class="val" id="res-correct">0</span><span class="lbl">Correct</span></div>
+        <div class="stat red"><span class="val" id="res-wrong">0</span><span class="lbl">Wrong</span></div>
+        <div class="stat blue"><span class="val" id="res-time">0:00</span><span class="lbl">Time</span></div>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:center;margin-bottom:32px">
+      <button class="btn btn-primary" onclick="startQuiz()">Retake (new shuffle) →</button>
+    </div>
+    <div id="review-section"></div>
+  </div>
+
+</main>
+
+<script src="ccna2_questions_base.js"></script>
+<script>
+const ALL_QUESTIONS = window.CCNA2_BASE_QUESTIONS || [];
+document.getElementById('pool-total').textContent =
+    ALL_QUESTIONS.length;
+
+const QUESTIONS_PER_QUIZ = 60;
+let quizQuestions = [];
+let currentIndex = 0;
+let userAnswers = [];
+let startTime = null;
+let timerInterval = null;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  quizQuestions = shuffle(ALL_QUESTIONS).slice(0, QUESTIONS_PER_QUIZ).map(q => ({
+    ...q,
+    options: shuffle(q.options)
+  }));
+  currentIndex = 0;
+  userAnswers = new Array(QUESTIONS_PER_QUIZ).fill(null).map(() => []);
+  startTime = Date.now();
+
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('hud-total').textContent = QUESTIONS_PER_QUIZ;
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimer, 1000);
+
+  renderQuestion();
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+  const s = (elapsed % 60).toString().padStart(2, '0');
+  document.getElementById('timer-display').textContent = `${m}:${s}`;
+}
+
+function formatTime(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+function renderQuestion() {
+  const q = quizQuestions[currentIndex];
+  const pct = (currentIndex / QUESTIONS_PER_QUIZ) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('hud-q').textContent = currentIndex + 1;
+
+  const letters = ['A','B','C','D','E','F','G'];
+
+  let html = `
+    <div class="question-card">
+      <div class="q-meta">
+        <span>Question ${currentIndex + 1} of ${QUESTIONS_PER_QUIZ}</span>
+        ${q.multi ? '<span class="badge">MULTI-SELECT</span>' : ''}
+      </div>
+      <div class="question-text">${escHtml(q.question)}</div>
+      ${q.multi ? '<div class="multi-note">⚠ Select all correct answers</div>' : ''}
+      <div class="options">
+  `;
+
+  q.options.forEach((opt, i) => {
+    html += `
+      <div class="option" id="opt-${i}" onclick="toggleOption(${i})">
+        <div class="option-letter">${letters[i]}</div>
+        <div class="option-text">${escHtml(opt)}</div>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
+  document.getElementById('question-container').innerHTML = html;
+  document.getElementById('next-btn').disabled = true;
+  document.getElementById('next-btn').textContent = currentIndex === QUESTIONS_PER_QUIZ - 1 ? 'Finish →' : 'Next →';
+
+  // Restore any existing selection
+  const saved = userAnswers[currentIndex];
+  if (saved && saved.length > 0) {
+    saved.forEach(idx => {
+      document.getElementById(`opt-${idx}`)?.classList.add('selected');
+    });
+    document.getElementById('next-btn').disabled = false;
+  }
+}
+
+function toggleOption(idx) {
+  const q = quizQuestions[currentIndex];
+  const el = document.getElementById(`opt-${idx}`);
+
+  if (q.multi) {
+    el.classList.toggle('selected');
+    const sel = [...document.querySelectorAll('.option.selected')].map(e => parseInt(e.id.split('-')[1]));
+    userAnswers[currentIndex] = sel;
+    document.getElementById('next-btn').disabled = sel.length === 0;
+  } else {
+    document.querySelectorAll('.option').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    userAnswers[currentIndex] = [idx];
+    document.getElementById('next-btn').disabled = false;
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex === QUESTIONS_PER_QUIZ - 1) {
+    finishQuiz();
+    return;
+  }
+  currentIndex++;
+  renderQuestion();
+}
+
+function finishQuiz() {
+  clearInterval(timerInterval);
+  const elapsed = Date.now() - startTime;
+
+  let correct = 0;
+  const wrongList = [];
+
+  quizQuestions.forEach((q, i) => {
+    const selectedOpts = userAnswers[i].map(idx => q.options[idx]);
+    const correctOpts = q.correct;
+    const isCorrect = correctOpts.length === selectedOpts.length &&
+      correctOpts.every(c => selectedOpts.includes(c)) &&
+      selectedOpts.every(s => correctOpts.includes(s));
+
+    if (isCorrect) {
+      correct++;
+    } else {
+      wrongList.push({ q, selectedOpts, i });
+    }
+  });
+
+  const pct = Math.round((correct / QUESTIONS_PER_QUIZ) * 100);
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-pct').style.color = pct >= 70 ? 'var(--accent)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('res-frac').textContent = `${correct}/${QUESTIONS_PER_QUIZ}`;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = QUESTIONS_PER_QUIZ - correct;
+  document.getElementById('res-time').textContent = formatTime(elapsed);
+
+  // Animate ring
+  const circumference = 2 * Math.PI * 42;
+  const ring = document.getElementById('ring-fg');
+  ring.style.stroke = pct >= 70 ? 'var(--accent)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circumference * (1 - pct / 100);
+  }, 100);
+
+  // Build review
+  let reviewHtml = `<div class="review-header">Wrong answers (${wrongList.length})</div>`;
+
+  if (wrongList.length === 0) {
+    reviewHtml += `<div style="text-align:center;color:var(--accent);font-family:var(--mono);padding:20px">Perfect score! 🎉</div>`;
+  } else {
+    wrongList.forEach(({ q, selectedOpts }, ri) => {
+      reviewHtml += `
+        <div class="review-item wrong-item">
+          <div class="review-q"><strong>${ri + 1}.</strong> ${escHtml(q.question)}</div>
+          <div class="review-answers">
+            ${selectedOpts.length > 0 ? `<div class="review-answer your-wrong"><span class="review-label">Your answer</span>${selectedOpts.map(s => escHtml(s)).join('<br>')}</div>` : ''}
+            <div class="review-answer correct-ans"><span class="review-label">Correct answer</span>${q.correct.map(c => escHtml(c)).join('<br>')}</div>
+          </div>
+          <div class="expl">${escHtml(q.explanation)}</div>
+        </div>
+      `;
+    });
+  }
+
+  document.getElementById('review-section').innerHTML = reviewHtml;
+  window.scrollTo(0, 0);
+}
+
+function confirmQuit() {
+  if (confirm('Quit this quiz session? Progress will be lost.')) {
+    clearInterval(timerInterval);
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('hud').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+  }
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
