@@ -15,7 +15,7 @@ A lightweight, browser-based practice quiz for **CCNA 2: Switching, Routing, and
 
 No download or setup needed. Just use the live version:
 
-1. 1. Open the [live demo](https://joecharbel.github.io/CCNA2-Final-Exam-Practice/).
+1. Open the [live demo](https://joecharbel.github.io/CCNA2-Final-Exam-Practice/).
 2. Click **Start Quiz**.
 3. Answer the 60 questions (multi-select questions are marked).
 4. Review your score and any wrong answers with explanations at the end.
@@ -46,6 +46,7 @@ Each question in `ccna2_questions_base.js` follows this format:
 ## Known limitations
 
 - Some questions say "Refer to the exhibit" but the exhibit images are not included.
+- Matching/drag-and-drop questions from the original exam (where you link items together) can't be reproduced here. The one included, "Match each DHCP message type with its description," is shown as a single-choice question, so it only checks one pair.
 
 ## Disclaimer
 
