@@ -1,9 +1,6 @@
-[README.md](https://github.com/user-attachments/files/33655515/README.md)
 # CCNA 2 Practice Quiz (SRWE)
 
 A lightweight, browser-based practice quiz for **CCNA 2: Switching, Routing, and Wireless Essentials**. No installs, no backend, just open it and start practicing.
-
-**Live demo:** https://YOUR-USERNAME.github.io/REPO-NAME/
 
 ## Features
 
@@ -14,20 +11,19 @@ A lightweight, browser-based practice quiz for **CCNA 2: Switching, Routing, and
 - Results screen with score ring, time taken, and a review of every wrong answer with the correct answer and explanation
 - Responsive dark UI
 
-## Topics covered
+## How to run
 
-VLANs and trunking (DTP, VTP), inter-VLAN routing, STP/RSTP/PVST+, EtherChannel (LACP/PAgP), DHCPv4 and DHCPv6, SLAAC, FHRP/HSRP, LAN security (port security, DHCP snooping, DAI), WLAN fundamentals and security, static routing and floating static routes, and routing troubleshooting.
+No download or setup needed. Just use the live version:
 
-## Project structure
+1. 1. Open the [live demo](https://joecharbel.github.io/CCNA2-Final-Exam-Practice/).
+2. Click **Start Quiz**.
+3. Answer the 60 questions (multi-select questions are marked).
+4. Review your score and any wrong answers with explanations at the end.
+5. Click **Retake** for a new random set of questions.
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | UI, styling, and quiz logic |
-| `ccna2_questions_base.js` | Question bank (`window.CCNA2_BASE_QUESTIONS`) |
+## Run locally (optional)
 
-## Run locally
-
-Clone the repo and open `index.html` in any browser. No build step or server is required.
+You don't need to do this, since the live version above works in any browser. If you'd like an offline copy, clone the repo and open `index.html`. No build step or server is required.
 
 ## Adding or editing questions
 
